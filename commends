@@ -1,0 +1,5 @@
+set PROTO_FOLDER_PATH=C:/proto
+set PROTO_PLUGIN_PATH=C:/proto/protoc-gen-grpc-java-1.53.0-windows-x86_64.exe
+set OUTPUT_DIR=C:/proto
+
+protoc --proto_path=%PROTO_FOLDER_PATH% --plugin=protoc-gen-grpc-java=%PROTO_PLUGIN_PATH% --grpc-java_out=%OUTPUT_DIR% --java_out=%OUTPUT_DIR% %PROTO_FOLDER_PATH%/employee.proto
