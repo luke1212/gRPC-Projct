@@ -12,12 +12,14 @@ import io.grpc.stub.StreamObserver;
 // UserServiceImpl encapsulates the implementation of the gRPC service which gets User details
 public class UserServiceImpl extends UserServiceGrpc.UserServiceImplBase {
 
+    UserDao userDao = new UserDao();
+
     // This method is called whenever a client calls the getUser() RPC
     @Override
     public void getUser(GetUserRequest request, StreamObserver<GetUserResponse> responseObserver) {
 
         // Get an instance of UserDao to fetch user data from the database
-        UserDao userDao = new UserDao();
+
         User user = userDao.getDetails(request.getUsername());
 
         // Build a response object for the user with the required information
