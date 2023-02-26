@@ -3,6 +3,8 @@ package com.shopping.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,7 +15,7 @@ public class OrderDao {
 
     public ImmutableList<Order> getOrdersByUserId(int userId) {
         Connection connection = null;
-        ImmutableList<Order> orders = ImmutableList.of();
+        List<Order> orders = new ArrayList<>();
         try {
             logger.info("Getting orders for user id: " + userId);
             connection = H2DatabaseConnection.getConnectionToDatabase();
@@ -27,11 +29,11 @@ public class OrderDao {
                 order.setNoOfItems(result.getInt("NO_OF_ITEMS"));
                 order.setTotalAmount(result.getDouble("TOTAL_AMOUNT"));
                 order.setOrderDate(result.getDate("ORDER_DATE"));
-                orders = ImmutableList.<Order>builder().add(order).build();
+                orders.add(order);
             }
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error while getting orders for user id: " + userId, e);
         }
-        return orders;
+        return ImmutableList.copyOf(orders);
     }
 }
