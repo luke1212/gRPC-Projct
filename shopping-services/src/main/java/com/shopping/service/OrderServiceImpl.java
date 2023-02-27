@@ -12,22 +12,26 @@ import com.shopping.stubs.order.OrderServiceGrpc;
 import io.grpc.stub.StreamObserver;
 
 public class OrderServiceImpl extends OrderServiceGrpc.OrderServiceImplBase {
-    private static final Logger logger = Logger.getLogger(OrderServiceImpl.class.getName());
-    private OrderDao orderDao = new OrderDao();
+        private static final Logger logger = Logger.getLogger(OrderServiceImpl.class.getName());
+        private OrderDao orderDao = new OrderDao();
 
-    @Override
-    public void getOrdersForUser(OrderRequest request, StreamObserver<OrderResponse> responseObserver) {
-        logger.info("Getting orders for user id: " + request.getUserId());
-        responseObserver.onNext(OrderResponse.newBuilder()
-                .addAllOrders(orderDao.getOrdersByUserId(request.getUserId()).stream()
-                        .map(order -> Order.newBuilder()
-                                .setOrderId(order.getOrderId())
-                                .setNoOfItems(order.getNoOfItems())
-                                .setTotalAmount(order.getTotalAmount())
-                                .setOrderDate(Timestamps.fromMillis(order.getOrderDate().getTime()))
-                                .build())
-                        .collect(ImmutableList.toImmutableList()))
-                .build());
-        responseObserver.onCompleted();
-    }
+        @Override
+        public void getOrdersForUser(OrderRequest request, StreamObserver<OrderResponse> responseObserver) {
+                logger.info("Getting orders for user id: " + request.getUserId());
+                ImmutableList<Order> orders = orderDao.getOrdersByUserId(request.getUserId()).stream()
+                                .map(order -> Order.newBuilder()
+                                                .setUserId(order.getUserId())
+                                                .setOrderId(order.getOrderId())
+                                                .setNoOfItems(order.getNoOfItems())
+                                                .setTotalAmount(order.getTotalAmount())
+                                                .setOrderDate(Timestamps.fromMillis(
+                                                                order.getOrderDate().getTime()))
+                                                .build())
+                                .collect(ImmutableList.toImmutableList());
+                logger.info("Orders: " + orders);
+                responseObserver.onNext(OrderResponse.newBuilder()
+                                .addAllOrders(orders)
+                                .build());
+                responseObserver.onCompleted();
+        }
 }
